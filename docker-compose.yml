@@ -7,8 +7,8 @@ services:
       - SERVER_DOMAIN=http://backend-web-server
       - DEFAULT_LOCALE=en
 #      - NUXT_PUBLIC_APP_NAME='ChatGPT UI' # The name of the application
-#      - NUXT_PUBLIC_TYPEWRITER=true # Whether to enable the typewriter effect, default false
-#      - NUXT_PUBLIC_TYPEWRITER_DELAY=50 # The delay time of the typewriter effect, default 50ms
+      - NUXT_PUBLIC_TYPEWRITER=true # Whether to enable the typewriter effect, default false
+      - NUXT_PUBLIC_TYPEWRITER_DELAY=30 # The delay time of the typewriter effect, default 50ms
     depends_on:
       - backend-web-server
     ports:
@@ -19,12 +19,14 @@ services:
   backend-wsgi-server:
 #    platform: linux/x86_64
     image: wongsaang/chatgpt-ui-wsgi-server:latest
+    volumes:
+      - ./data:/app/dbdata
     environment:
       - DEBUG=${DEBUG:-False} # Whether to enable debug mode, default False
       - APP_DOMAIN=${APP_DOMAIN:-192.168.1.10:9100}
       - SERVER_WORKERS=3 # The number of worker processes for handling requests.
       - WORKER_TIMEOUT=180 # Workers silent for more than this many seconds are killed and restarted. default 180s
-      - DB_URL=${DB_URL:-sqlite:///db.sqlite3} # If this parameter is not set, the built-in Sqlite will be used by default. It should be noted that if you do not connect to an external database, the data will be lost after the container is destroyed.
+      - DB_URL=${DB_URL:-sqlite:///./dbdata/db.sqlite3} # If this parameter is not set, the built-in Sqlite will be used by default. It should be noted that if you do not connect to an external database, the data will be lost after the container is destroyed.
       - DJANGO_SUPERUSER_USERNAME=admin # default superuser name
       - DJANGO_SUPERUSER_PASSWORD=password # default superuser password
       - DJANGO_SUPERUSER_EMAIL=admin@example.com # default superuser email
